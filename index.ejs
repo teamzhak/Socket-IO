@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+	<head>
+	<title>ZHAK CHAT</title>
+	<style>
+	#messages { list-style-type: none; margin: 0; padding: 0; }
+	#messages li { padding: 5px 10px; }
+	#messages li:nth-child(odd) { background: #eee; }
+	</style>
+	</head>
+	<body>
+		<ul id="messages"></ul>
+		<form action="">
+			<input id="m" autocomplete="off" /><button>Send</button>
+		</form>
+		<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+		<script>
+			var socket = io();
+			const chatRoom = <%= chatRoom %> + 1;
+			socket.emit('new', chatRoom);
+			console.log(chatRoom);
+			$('form').submit(function(){
+				var room = chatRoom;
+				var message = $('#m').val();
+				socket.emit('send', {room:room, message:message});
+				$('#m').val('');
+				return false;
+			});
+			socket.on('message', function(data){
+				console.log(data.message);
+				console.log(chatRoom);
+				$('#messages').append($('<li>').text(data.message));
+			});
+		</script>
+	</body>
+</html> 
